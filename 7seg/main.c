@@ -1,4 +1,5 @@
-#include<avr/io.h>
+#include <avr/io.h>
+#include "i2clib/i2c_master.h"
 
 //the seven segments display table
 uint8_t numbers[]={
@@ -13,7 +14,7 @@ uint8_t numbers[]={
   0b00000111, //seven
   0b01111111, //eight
   0b01101111  //nine
-}
+};
 
 int main (void){
 
