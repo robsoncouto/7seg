@@ -1,4 +1,4 @@
-
+#include<avr/io.h>
 #define displayPort PORTB
 #define displayDDR DDRB
 
@@ -8,6 +8,22 @@
 
 //todo timer interrupt
 uint8_t time[4];
+uint8_t curr_digit;
+
+
+//interrupt code, sketch
+void interrupt(){
+  curr_digit++;
+  if (curr_digit==4) curr_digit=0;
+  //put number onto digit
+  displayPort=0x00;
+  displayPort=time[curr_digit];
+
+  //enable digit
+  digitPort&=~(0x0f);
+  digitPort=(1<<curr_digit);
+
+}
 
 //the seven segments display table
 uint8_t numbers[]={

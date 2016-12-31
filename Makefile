@@ -8,7 +8,7 @@
 MCU = atmega8
 FORMAT = ihex
 TARGET = main
-SRC = $(TARGET).c i2clib/i2c_master.c
+SRC = $(TARGET).c i2clib/i2c_master.c display.c
 ASRC =
 OPT = s
 
