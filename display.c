@@ -1,4 +1,6 @@
 #include<avr/io.h>
+#include<avr/interrupt.h>
+
 #define displayPort PORTB
 #define displayDDR DDRB
 
@@ -12,7 +14,7 @@ uint8_t curr_digit;
 
 
 //interrupt code, sketch
-void interrupt(){
+ISR(TIMER0_COMPA_vect){
   curr_digit++;
   if (curr_digit==4) curr_digit=0;
   //put number onto digit
