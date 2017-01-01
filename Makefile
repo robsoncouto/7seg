@@ -5,7 +5,7 @@
 # (GNU make, BSD make, SysV make)
 
 
-MCU = atmega8
+MCU = atmega32
 FORMAT = ihex
 TARGET = main
 SRC = $(TARGET).c i2clib/i2c_master.c display.c
