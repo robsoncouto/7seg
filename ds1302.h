@@ -1,6 +1,8 @@
 #ifndef DS1302_H
 #define DS1302_H
 
+#include<avr/io.h>
+
 //registers defines
 #define DS_SEC 0x80
 #define DS_MIN 0x82
@@ -10,14 +12,27 @@
 #define DS_DAY 0x8A
 #define DS_YEAR 0x8C
 #define DS_WPR 0x8E
+#define READ 0x01
+#define WRITE 0x00
 
 //Pin definition, FIXME
-#define CTRL_PIN PINC;
-#define CTRL_PORT PORTC;
-#define CTRL_DDR DDRC;
+#define RTC_PIN PIND
+#define RTC_PORT PORTD
+#define RTC_DDR DDRD
+
+#define CE 5
+#define IO 7
+#define SCLK 6
+
 
 uint8_t DS_read(uint8_t);
 void DS_write(uint8_t,uint8_t);
 void ds1302Init(void);
+uint8_t dsGetSeconds(void);
+uint8_t dsGetMinutes(void);
+uint8_t dsGetHours(void);
+uint8_t dsGetDay(void);
+uint8_t dsGetMonth(void);
+uint8_t dsGetYear(void);
 
 #endif
