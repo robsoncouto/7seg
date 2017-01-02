@@ -23,45 +23,63 @@ uint8_t numbers[]={
 };
 void writeByte(uint8_t data){
   for(uint8_t i=0;i<8;i++){
-    if(data&(1<<i)){
-      CTRL_PORT|=(1<<IO);
+    displayPort&=~(1<<CLK);
+    if(data&(1<<(7-i))){
+      displayPort|=(1<<DIN);
     }else{
-      CTRL_PORT&=~(1<<IO);
+      displayPort&=~(1<<DIN);
     }
-      CTRL_PORT|=(1<<SCK);
-      CTRL_PORT&=~(1<<SCK);
+      displayPort|=(1<<CLK);
   }
+}
+void maxWrite(uint8_t reg, uint8_t data){
+  displayPort&=~(1<<LOAD);
+  writeByte(reg);
+  writeByte(data);
+  displayPort|=(1<<LOAD);
 }
 
 //interrupt code, sketch
 ISR(TIMER0_COMP_vect ){
-  curr_digit++;
-  if (curr_digit==4) curr_digit=0;
-  //put number onto digit
-  segmentPort=0x00;
-  segmentPort=numbers[time[curr_digit]];
-
-  //enable digit
-  digitPort&=~(0xFF);
-  digitPort=(1<<(curr_digit+4)); //each digit is connected to pin 4 onwards
+  // curr_digit++;
+  // if (curr_digit==4) curr_digit=0;
+  // //put number onto digit
+  // segmentPort=0x00;
+  // segmentPort=numbers[time[curr_digit]];
+  //
+  // //enable digit
+  // digitPort&=~(0xFF);
+  // digitPort=(1<<(curr_digit+4)); //each digit is connected to pin 4 onwards
 }
 
 void displayinit(void){
-  displayDDR=(1<<LOAD)|(1<<CLK)|(1<<DIN));
-  segmentPort=0x00;
+  displayDDR=(1<<LOAD)|(1<<CLK)|(1<<DIN);
+  displayPort=(1<<LOAD)|(1<<CLK)|(1<<DIN);
 
-  displayWrite(0,0);
+  maxWrite(max7219_reg_scanLimit,0x03);
+  maxWrite(max7219_reg_decodeMode,0x0F);
+  maxWrite(max7219_reg_shutdown,0x01);
+  maxWrite(max7219_reg_displayTest,0x00);
+  maxWrite(max7219_reg_intensity,0x0f);
 
+  //displayWrite(0,0);
+  maxWrite(max7219_reg_digit0,0);
+  maxWrite(max7219_reg_digit1,1);
+  maxWrite(max7219_reg_digit2,2);
+  maxWrite(max7219_reg_digit3,3);
   TCCR0=(1<<WGM01); //CTC mode, pin disconnected
   OCR0=125;
   TCNT0=0;
   TIMSK=OCIE0; //Enable interrup on compare match
-  sei();
+  //sei();
 }
 void displayWrite(uint8_t hours, uint8_t minutes){
   time[1]=minutes/10;      //digit for sets of ten
-  time[0]=minutes-time[1]; //digit for set of ones
-
+  maxWrite(max7219_reg_digit1,time[1]);
+  time[0]=minutes-time[1]*10; //digit for set of ones
+  maxWrite(max7219_reg_digit0,time[0]);
   time[3]=hours/10;      //digit for sets of ten
-  time[2]=hours-time[3]; //digit for set of ones
+  maxWrite(max7219_reg_digit3,time[3]);
+  time[2]=hours-time[3]*10; //digit for set of ones
+  maxWrite(max7219_reg_digit2,time[2]);
 }
