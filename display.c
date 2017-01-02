@@ -77,7 +77,7 @@ void displayWrite(uint8_t hours, uint8_t minutes){
   time[1]=minutes/10;      //digit for sets of ten
   maxWrite(max7219_reg_digit1,time[1]);
   time[0]=minutes-time[1]*10; //digit for set of ones
-  maxWrite(max7219_reg_digit0,time[0]);
+  maxWrite(max7219_reg_digit0,time[0]|0x80);
   time[3]=hours/10;      //digit for sets of ten
   maxWrite(max7219_reg_digit3,time[3]);
   time[2]=hours-time[3]*10; //digit for set of ones
