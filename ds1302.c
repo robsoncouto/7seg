@@ -1,18 +1,32 @@
 #include "ds1302.h"
+#define F_CPU 8000000UL
 #include <util/delay.h>
+
+struct time{
+  uint8_t seconds;
+  uint8_t minutes;
+  uint8_t hours;
+  uint8_t date;
+  uint8_t month;
+  uint8_t day;
+  uint8_t year;
+  uint8_t protection;
+};
+struct time t;
 
 void dsWriteByte(uint8_t data){
   RTC_DDR|=(1<<IO);
   for(uint8_t i=0;i<8;i++){
     RTC_PORT&=~(1<<SCLK);
-    _delay_ms(1);
+    _delay_us(1);
     if(data&(1<<i)){
       RTC_PORT|=(1<<IO);
     }else{
       RTC_PORT&=~(1<<IO);
     }
+    _delay_us(1);
     RTC_PORT|=(1<<SCLK);
-    _delay_ms(1);
+    _delay_us(1);
   }
 }
 uint8_t dsReadByte(void){
@@ -21,14 +35,15 @@ uint8_t dsReadByte(void){
   RTC_PORT|=(1<<IO);
   for(uint8_t i=0;i<8;i++){
     RTC_PORT&=~(1<<SCLK);
-    _delay_ms(1);
+    _delay_us(1);
     if(RTC_PIN&(1<<IO)){
       data|=(1<<i);
     }else{
       data&=~(1<<i);
     }
+      _delay_us(1);
       RTC_PORT|=(1<<SCLK);
-      _delay_ms(1);
+      _delay_us(1);
   }
   return data;
 }
@@ -36,20 +51,31 @@ uint8_t dsReadByte(void){
 uint8_t DS_read(uint8_t addr){
   uint8_t data;
   RTC_PORT|=(1<<CE);
-  _delay_ms(1);
+  _delay_us(4);
   dsWriteByte(addr|READ);
   data=dsReadByte();
   RTC_PORT&=~(1<<CE);
+  _delay_us(4);
+
   return data;
 
 }
 
 void DS_write(uint8_t addr,uint8_t data){
   RTC_PORT|=(1<<CE);
-  _delay_ms(1);
+  _delay_us(4);
   dsWriteByte(addr|WRITE);
   dsWriteByte(data);
   RTC_PORT&=~(1<<CE);
+  _delay_us(4);
+}
+void DS_burst(struct time t){
+  RTC_PORT|=(1<<CE);
+  _delay_us(4);
+  dsWriteByte(0xBE);
+
+  RTC_PORT&=~(1<<CE);
+  _delay_us(4);
 
 }
 
