@@ -8,7 +8,7 @@
 MCU = atmega32
 FORMAT = ihex
 TARGET = main
-SRC = $(TARGET).c ds1302.c display.c
+SRC = $(TARGET).c RTC/rtc.c display.c
 ASRC =
 OPT = s
 
