@@ -12,6 +12,8 @@
 #define DS_DAY 0x8A
 #define DS_YEAR 0x8C
 #define DS_WPR 0x8E
+#define DS_TIC 0x90
+
 #define READ 0x01
 #define WRITE 0x00
 
@@ -21,8 +23,8 @@
 #define RTC_DDR DDRD
 
 #define CE 5
-#define IO 7
-#define SCLK 6
+#define IO 6
+#define SCLK 7
 
 
 uint8_t DS_read(uint8_t);
@@ -35,4 +37,5 @@ uint8_t dsGetDay(void);
 uint8_t dsGetMonth(void);
 uint8_t dsGetYear(void);
 
+void dsReset(void);
 #endif
